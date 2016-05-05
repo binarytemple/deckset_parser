@@ -1,0 +1,10 @@
+*.ez
+out
+*.iml
+.DS_Store
+.idea
+.profile
+/_build
+/cover
+/deps
+erl_crash.dump
