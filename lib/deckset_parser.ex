@@ -4,6 +4,7 @@ defmodule DecksetParser do
   require Logger
   use ExAws.S3.Client
 
+  @doc "per module callback requeired by ExAws macros"
   def config_root do
     Application.get_all_env(:ex_aws)
   end
@@ -17,7 +18,7 @@ defmodule DecksetParser do
         do: name
   end
 
-  def find_files(root \\ "priv" , path \\ "priv/elixirpresentation/**/*", callback \\ nil ) do
+  def find_files(root \\ "priv" , path \\ "priv/test-resources/elixirpresentation/**/*", callback \\ nil ) do
       files = for file <- Path.wildcard(path),
       File.dir?(file) == false,  
       tail <- [String.replace_leading(file,root,"")],
@@ -59,17 +60,30 @@ defmodule DecksetParser do
 
     case get_content_type(path) do
         "text/markdown" ->
-            html_content=Earmark.to_html(content)
+            html_content=convert_to_markdown(content)
+
             html_name=Path.rootname(name) <> ".html"
             html_content_length=byte_size(html_content)
-            aws_put_content(bucket,html_name,html_content,"text/html",html_content_length)
-            put_object(bucket, name, content, [{:content_type, "text/markdown"}, {:content_length, content_length}])
+            aws_put_content(bucket,html_name,html_content,"text/html; charset=utf-8",html_content_length)
+            put_object(bucket, name, content, [{:content_type, "text/markdown; charset=utf-8"}, {:content_length, content_length}])
 
         other -> put_object(bucket, name, content, [{:content_type, other}, {:content_length, content_length}])
     end
 
     #Logger.debug "#{bucket}, #{name}, #{content_type}, #{content_length}"
+  end
 
-  end 
+  def convert_to_markdown(content) do
+      """
+       <html>
+       <head>
+       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+       <title>converted markdown</title>
+       </head>
+       <body>
+       #{Earmark.to_html(content)}
+       </body>
+      """
+  end
 
 end
