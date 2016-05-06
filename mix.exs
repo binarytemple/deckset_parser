@@ -14,7 +14,7 @@ defmodule DecksetParser.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :ex_aws, :arc, :httpoison]]
+    [applications: [:logger, :ex_aws, :httpoison]]
   end
 
   # Dependencies can be Hex packages:
@@ -29,9 +29,9 @@ defmodule DecksetParser.Mixfile do
   defp deps do
     [
       {:earmark, git: "git@github.com:binarytemple/earmark.git"},
-#      {:dir_walker, git: "git@github.com:binarytemple/dir_walker.git"},
+      #{:dir_walker, git: "git@github.com:binarytemple/dir_walker.git"},
       {:httpoison, "~> 0.8.3"},
-#      {:arc, "~> 0.2.2"},
+      #{:arc, "~> 0.2.2"},
       {:ex_aws, "~> 0.4.10"}
     ]
   end
